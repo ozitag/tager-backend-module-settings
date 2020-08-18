@@ -6,19 +6,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use OZiTAG\Tager\Backend\Core\Features\Feature;
 use OZiTAG\Tager\Backend\ModuleSettings\Jobs\GetSettingValueJob;
 
-class GetModuleSettingsFeature extends Feature
+class GetModuleSettingsFeature extends BaseModuleSettingsFeature
 {
-    private $module;
-
-    private $modelClass;
-
-    public function __construct($module, $modelClass)
-    {
-        $this->module = $module;
-
-        $this->modelClass = $modelClass;
-    }
-
     public function handle()
     {
         $className = $this->modelClass;

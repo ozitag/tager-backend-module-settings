@@ -6,6 +6,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use OZiTAG\Tager\Backend\Core\Controllers\Controller;
 use OZiTAG\Tager\Backend\Core\Resources\SuccessResource;
 use OZiTAG\Tager\Backend\ModuleSettings\Features\GetModuleSettingsFeature;
+use OZiTAG\Tager\Backend\ModuleSettings\Features\SaveModuleSettingsFeature;
 
 class AdminSettingsController extends Controller
 {
@@ -32,6 +33,9 @@ class AdminSettingsController extends Controller
 
     public function save()
     {
-        return new SuccessResource();
+        return $this->serve(SaveModuleSettingsFeature::class, [
+            'modelClass' => $this->modelClass,
+            'module' => $this->module
+        ]);
     }
 }
