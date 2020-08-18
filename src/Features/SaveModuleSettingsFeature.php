@@ -37,6 +37,7 @@ class SaveModuleSettingsFeature extends BaseModuleSettingsFeature
                 'param' => $key,
                 'type' => $model['type'],
                 'value' => $value,
+                'meta' => $model['meta'] ?? []
             ]);
         }
 
