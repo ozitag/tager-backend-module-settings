@@ -13,12 +13,9 @@ class SaveModuleSettingsFeature extends BaseModuleSettingsFeature
 {
     public function handle(UpdateSettingsRequest $request)
     {
-        $values = $request->values;
-
         $className = $this->modelClass;
         $keys = $className::getValues();
 
-        $result = [];
         foreach ($keys as $key) {
             $model = $className::model($key);
             if (!$model) {
@@ -27,7 +24,7 @@ class SaveModuleSettingsFeature extends BaseModuleSettingsFeature
 
             $value = null;
             foreach ($request->values as $requestValue) {
-                if ($requestValue['field'] == $key) {
+                if ($requestValue['name'] == $key) {
                     $value = $requestValue['value'];
                 }
             }
