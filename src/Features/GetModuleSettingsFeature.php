@@ -17,7 +17,7 @@ class GetModuleSettingsFeature extends BaseModuleSettingsFeature
         $result = [];
         foreach ($keys as $key) {
             $item = [
-                'field' => $key
+                'name' => $key
             ];
 
             $model = $className::model($key);
