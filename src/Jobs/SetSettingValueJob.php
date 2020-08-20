@@ -5,6 +5,7 @@ namespace OZiTAG\Tager\Backend\ModuleSettings\Jobs;
 use Ozerich\FileStorage\Storage;
 use OZiTAG\Tager\Backend\Core\Jobs\Job;
 use OZiTAG\Tager\Backend\Fields\FieldFactory;
+use OZiTAG\Tager\Backend\Fields\TypeFactory;
 use OZiTAG\Tager\Backend\ModuleSettings\Repositories\ModuleSettingsRepository;
 
 class SetSettingValueJob extends Job
@@ -35,17 +36,17 @@ class SetSettingValueJob extends Job
             $repository->set($model);
         }
 
-        $field = FieldFactory::create($this->type);
-        $field->setValue($this->value);
+        $type = TypeFactory::create($this->type);
+        $type->setValue($this->value);
 
         if (isset($this->meta['scenario'])) {
-            $field->applyFileScenario($this->meta['scenario']);
+            $type->applyFileScenario($this->meta['scenario']);
         }
 
         $repository->fillAndSave([
             'module' => $this->module,
             'param' => $this->param,
-            'value' => $field->getDatabaseValue()
+            'value' => $type->getDatabaseValue()
         ]);
     }
 }

@@ -4,6 +4,7 @@ namespace OZiTAG\Tager\Backend\ModuleSettings\Jobs;
 
 use OZiTAG\Tager\Backend\Core\Jobs\Job;
 use OZiTAG\Tager\Backend\Fields\FieldFactory;
+use OZiTAG\Tager\Backend\Fields\TypeFactory;
 use OZiTAG\Tager\Backend\ModuleSettings\Repositories\ModuleSettingsRepository;
 
 class GetSettingPublicValueJob extends Job
@@ -28,9 +29,9 @@ class GetSettingPublicValueJob extends Job
             return null;
         }
 
-        $field = FieldFactory::create($this->type);
-        $field->setValue($model->value);
+        $type = TypeFactory::create($this->type);
+        $type->setValue($model->value);
 
-        return $field->getPublicValue();
+        return $type->getPublicValue();
     }
 }

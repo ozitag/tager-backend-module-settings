@@ -5,6 +5,7 @@ namespace OZiTAG\Tager\Backend\ModuleSettings\Features;
 use Illuminate\Http\Resources\Json\JsonResource;
 use OZiTAG\Tager\Backend\Core\Features\Feature;
 use OZiTAG\Tager\Backend\Core\Resources\SuccessResource;
+use OZiTAG\Tager\Backend\Fields\Base\Field;
 use OZiTAG\Tager\Backend\ModuleSettings\Contracts\IModuleSettingsFieldContract;
 use OZiTAG\Tager\Backend\ModuleSettings\Jobs\GetSettingValueJob;
 use OZiTAG\Tager\Backend\ModuleSettings\Jobs\SetSettingValueJob;
@@ -21,17 +22,19 @@ class SaveModuleSettingsFeature extends BaseModuleSettingsFeature
             throw new \Exception('modelClass must implements IModuleSettingsFieldContract');
         }
 
-        $keys = $modelClass::getValues();
+        $keys = $modelClass::getParams();
 
         foreach ($keys as $key) {
-            $model = $modelClass::model($key);
+
+            /** @var Field $model */
+            $model = $modelClass::field($key);
             if (!$model) {
                 continue;
             }
 
             $value = null;
             foreach ($request->values as $requestValue) {
-                if ($requestValue['name'] == $key) {
+                if ($requestValue['field'] == $key) {
                     $value = $requestValue['value'];
                 }
             }
@@ -39,9 +42,9 @@ class SaveModuleSettingsFeature extends BaseModuleSettingsFeature
             $this->run(SetSettingValueJob::class, [
                 'module' => $this->module,
                 'param' => $key,
-                'type' => $model['type'],
+                'type' => $model->getType(),
+                'meta' => $model->getMeta(),
                 'value' => $value,
-                'meta' => $model['meta'] ?? []
             ]);
         }
 

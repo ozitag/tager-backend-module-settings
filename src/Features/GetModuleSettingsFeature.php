@@ -4,6 +4,7 @@ namespace OZiTAG\Tager\Backend\ModuleSettings\Features;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use OZiTAG\Tager\Backend\Core\Features\Feature;
+use OZiTAG\Tager\Backend\Fields\Base\Field;
 use OZiTAG\Tager\Backend\ModuleSettings\Contracts\IModuleSettingsFieldContract;
 use OZiTAG\Tager\Backend\ModuleSettings\Jobs\GetSettingValueJob;
 
@@ -18,7 +19,7 @@ class GetModuleSettingsFeature extends BaseModuleSettingsFeature
             throw new \Exception('modelClass must implements IModuleSettingsFieldContract');
         }
 
-        $keys = $modelClass::getValues();
+        $keys = $modelClass::getParams();
 
         $result = [];
         foreach ($keys as $key) {
@@ -26,20 +27,21 @@ class GetModuleSettingsFeature extends BaseModuleSettingsFeature
                 'name' => $key
             ];
 
-            $model = $modelClass::model($key);
+            /** @var Field $model */
+            $model = $modelClass::field($key);
             if (!$model) {
                 continue;
             }
 
             $item = array_merge($item, [
-                'label' => $model['label'],
-                'type' => $model['type'],
+                'label' => $model->getLabel(),
+                'type' => $model->getType()
             ]);
 
             $item['value'] = $this->run(GetSettingValueJob::class, [
                 'module' => $this->module,
                 'param' => $key,
-                'type' => $item['type']
+                'type' => $model->getType()
             ]);
 
             $result[] = $item;

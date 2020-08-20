@@ -2,9 +2,11 @@
 
 namespace OZiTAG\Tager\Backend\ModuleSettings\Contracts;
 
+use OZiTAG\Tager\Backend\Fields\Base\Field;
+
 interface IModuleSettingsFieldContract
 {
-    public static function getValues();
+    public static function getParams(): array;
 
-    public static function model($param);
+    public static function field(string $param): Field;
 }
