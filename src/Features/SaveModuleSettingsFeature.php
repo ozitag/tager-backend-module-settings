@@ -5,6 +5,7 @@ namespace OZiTAG\Tager\Backend\ModuleSettings\Features;
 use Illuminate\Http\Resources\Json\JsonResource;
 use OZiTAG\Tager\Backend\Core\Features\Feature;
 use OZiTAG\Tager\Backend\Core\Resources\SuccessResource;
+use OZiTAG\Tager\Backend\ModuleSettings\Contracts\IModuleSettingsFieldContract;
 use OZiTAG\Tager\Backend\ModuleSettings\Jobs\GetSettingValueJob;
 use OZiTAG\Tager\Backend\ModuleSettings\Jobs\SetSettingValueJob;
 use OZiTAG\Tager\Backend\ModuleSettings\Requests\UpdateSettingsRequest;
@@ -13,11 +14,17 @@ class SaveModuleSettingsFeature extends BaseModuleSettingsFeature
 {
     public function handle(UpdateSettingsRequest $request)
     {
-        $className = $this->modelClass;
-        $keys = $className::getValues();
+        $modelClass = $this->modelClass;
+
+        $reflectionModelClass = new \ReflectionClass($modelClass);
+        if ($reflectionModelClass->implementsInterface(IModuleSettingsFieldContract::class) == false) {
+            throw new \Exception('modelClass must implements IModuleSettingsFieldContract');
+        }
+
+        $keys = $modelClass::getValues();
 
         foreach ($keys as $key) {
-            $model = $className::model($key);
+            $model = $modelClass::model($key);
             if (!$model) {
                 continue;
             }

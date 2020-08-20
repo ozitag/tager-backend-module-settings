@@ -4,15 +4,21 @@ namespace OZiTAG\Tager\Backend\ModuleSettings\Features;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use OZiTAG\Tager\Backend\Core\Features\Feature;
+use OZiTAG\Tager\Backend\ModuleSettings\Contracts\IModuleSettingsFieldContract;
 use OZiTAG\Tager\Backend\ModuleSettings\Jobs\GetSettingValueJob;
 
 class GetModuleSettingsFeature extends BaseModuleSettingsFeature
 {
     public function handle()
     {
-        $className = $this->modelClass;
+        $modelClass = $this->modelClass;
 
-        $keys = $className::getValues();
+        $reflectionModelClass = new \ReflectionClass($modelClass);
+        if ($reflectionModelClass->implementsInterface(IModuleSettingsFieldContract::class) == false) {
+            throw new \Exception('modelClass must implements IModuleSettingsFieldContract');
+        }
+
+        $keys = $modelClass::getValues();
 
         $result = [];
         foreach ($keys as $key) {
@@ -20,7 +26,7 @@ class GetModuleSettingsFeature extends BaseModuleSettingsFeature
                 'name' => $key
             ];
 
-            $model = $className::model($key);
+            $model = $modelClass::model($key);
             if (!$model) {
                 continue;
             }
