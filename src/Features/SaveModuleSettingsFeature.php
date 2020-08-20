@@ -34,7 +34,7 @@ class SaveModuleSettingsFeature extends BaseModuleSettingsFeature
 
             $value = null;
             foreach ($request->values as $requestValue) {
-                if ($requestValue['field'] == $key) {
+                if ($requestValue['name'] == $key) {
                     $value = $requestValue['value'];
                 }
             }
