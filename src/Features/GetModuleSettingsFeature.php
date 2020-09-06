@@ -5,8 +5,9 @@ namespace OZiTAG\Tager\Backend\ModuleSettings\Features;
 use Illuminate\Http\Resources\Json\JsonResource;
 use OZiTAG\Tager\Backend\Core\Features\Feature;
 use OZiTAG\Tager\Backend\Fields\Base\Field;
-use OZiTAG\Tager\Backend\ModuleSettings\Contracts\IModuleSettingsFieldContract;
+use OZiTAG\Tager\Backend\ModuleSettings\Contracts\IModuleSettingsFieldEnumContract;
 use OZiTAG\Tager\Backend\ModuleSettings\Jobs\GetSettingValueJob;
+use OZiTAG\Tager\Backend\ModuleSettings\Structures\ModuleSettingField;
 
 class GetModuleSettingsFeature extends BaseModuleSettingsFeature
 {
@@ -15,8 +16,8 @@ class GetModuleSettingsFeature extends BaseModuleSettingsFeature
         $modelClass = $this->modelClass;
 
         $reflectionModelClass = new \ReflectionClass($modelClass);
-        if ($reflectionModelClass->implementsInterface(IModuleSettingsFieldContract::class) == false) {
-            throw new \Exception('modelClass must implements IModuleSettingsFieldContract');
+        if ($reflectionModelClass->implementsInterface(IModuleSettingsFieldEnumContract::class) == false) {
+            throw new \Exception('modelClass must implements IModuleSettingsFieldEnumContract');
         }
 
         $keys = $modelClass::getParams();
@@ -27,21 +28,21 @@ class GetModuleSettingsFeature extends BaseModuleSettingsFeature
                 'name' => $key
             ];
 
-            /** @var Field $model */
+            /** @var ModuleSettingField $model */
             $model = $modelClass::field($key);
             if (!$model) {
                 continue;
             }
 
             $item = array_merge($item, [
-                'label' => $model->getLabel(),
-                'type' => $model->getType()
+                'label' => $model->getField()->getLabel(),
+                'type' => $model->getField()->getType()
             ]);
 
             $item['value'] = $this->run(GetSettingValueJob::class, [
                 'module' => $this->module,
                 'param' => $key,
-                'type' => $model->getType()
+                'type' => $model->getField()->getType()
             ]);
 
             $result[] = $item;

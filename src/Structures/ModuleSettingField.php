@@ -6,13 +6,31 @@ use OZiTAG\Tager\Backend\Core\Enums\Enum;
 use OZiTAG\Tager\Backend\Fields\Base\BaseField;
 use OZiTAG\Tager\Backend\Fields\Base\Field;
 use OZiTAG\Tager\Backend\ModuleSettings\Contracts\IModuleSettingsFieldContract;
+use OZiTAG\Tager\Backend\ModuleSettings\Contracts\IModuleSettingsValidator;
 
-abstract class ModuleSettingField extends Enum implements IModuleSettingsFieldContract
+class ModuleSettingField
 {
-    abstract static function field(string $param): Field;
+    /** @var Field */
+    private $field;
 
-    public static function getParams(): array
+    /** @var IModuleSettingsValidator|null */
+    private $validator;
+
+    public function __construct(Field $field, ?IModuleSettingsValidator $validator = null)
     {
-        return static::getValues();
+        $this->field = $field;
+
+        $this->validator = $validator;
     }
+
+    public function getValidator()
+    {
+        return $this->validator;
+    }
+
+    public function getField()
+    {
+        return $this->field;
+    }
+
 }

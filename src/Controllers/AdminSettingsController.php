@@ -11,19 +11,19 @@ use OZiTAG\Tager\Backend\ModuleSettings\Features\SaveModuleSettingsFeature;
 class AdminSettingsController extends Controller
 {
     /** @var string */
-    private $modelClass;
+    private $enumClass;
 
     /** @var string */
     private $module;
-    
+
     /** @var string|null */
     private $cacheNamespace = null;
 
-    public function __construct($module, $modelClass, $cacheNamespace = null)
+    public function __construct($module, $enumClass, $cacheNamespace = null)
     {
         $this->module = $module;
 
-        $this->modelClass = $modelClass;
+        $this->enumClass = $enumClass;
 
         $this->cacheNamespace = $cacheNamespace;
     }
@@ -31,7 +31,7 @@ class AdminSettingsController extends Controller
     public function index()
     {
         return $this->serve(GetModuleSettingsFeature::class, [
-            'modelClass' => $this->modelClass,
+            'modelClass' => $this->enumClass,
             'module' => $this->module
         ]);
     }
@@ -39,7 +39,7 @@ class AdminSettingsController extends Controller
     public function save()
     {
         return $this->serve(SaveModuleSettingsFeature::class, [
-            'modelClass' => $this->modelClass,
+            'modelClass' => $this->enumClass,
             'module' => $this->module,
             'cacheNamespace' => $this->cacheNamespace
         ]);
