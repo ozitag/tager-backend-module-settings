@@ -24,6 +24,8 @@ class AdminSettingsController extends Controller
         $this->module = $module;
 
         $this->modelClass = $modelClass;
+
+        $this->cacheNamespace = $cacheNamespace;
     }
 
     public function index()
