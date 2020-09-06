@@ -6,6 +6,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use OZiTAG\Tager\Backend\Core\Features\Feature;
 use OZiTAG\Tager\Backend\Core\Resources\SuccessResource;
 use OZiTAG\Tager\Backend\Fields\Base\Field;
+use OZiTAG\Tager\Backend\HttpCache\HttpCache;
 use OZiTAG\Tager\Backend\ModuleSettings\Contracts\IModuleSettingsFieldContract;
 use OZiTAG\Tager\Backend\ModuleSettings\Jobs\GetSettingValueJob;
 use OZiTAG\Tager\Backend\ModuleSettings\Jobs\SetSettingValueJob;
@@ -13,7 +14,15 @@ use OZiTAG\Tager\Backend\ModuleSettings\Requests\UpdateSettingsRequest;
 
 class SaveModuleSettingsFeature extends BaseModuleSettingsFeature
 {
-    public function handle(UpdateSettingsRequest $request)
+    private $cacheNamespace;
+
+    public function __construct($module, $modelClass, $cacheNamespace)
+    {
+        $this->cacheNamespace = $cacheNamespace;
+        parent::__construct($module, $modelClass);
+    }
+
+    public function handle(UpdateSettingsRequest $request, HttpCache $httpCache)
     {
         $modelClass = $this->modelClass;
 
@@ -46,6 +55,10 @@ class SaveModuleSettingsFeature extends BaseModuleSettingsFeature
                 'meta' => $model->getMeta(),
                 'value' => $value,
             ]);
+        }
+
+        if ($this->cacheNamespace) {
+            $httpCache->clear($this->cacheNamespace);
         }
 
         return new SuccessResource();

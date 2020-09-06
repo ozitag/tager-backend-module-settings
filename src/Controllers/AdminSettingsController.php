@@ -15,8 +15,11 @@ class AdminSettingsController extends Controller
 
     /** @var string */
     private $module;
+    
+    /** @var string|null */
+    private $cacheNamespace = null;
 
-    public function __construct($module, $modelClass)
+    public function __construct($module, $modelClass, $cacheNamespace = null)
     {
         $this->module = $module;
 
@@ -35,7 +38,8 @@ class AdminSettingsController extends Controller
     {
         return $this->serve(SaveModuleSettingsFeature::class, [
             'modelClass' => $this->modelClass,
-            'module' => $this->module
+            'module' => $this->module,
+            'cacheNamespace' => $this->cacheNamespace
         ]);
     }
 }
