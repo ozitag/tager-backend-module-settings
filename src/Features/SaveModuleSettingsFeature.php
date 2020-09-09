@@ -26,9 +26,16 @@ class SaveModuleSettingsFeature extends BaseModuleSettingsFeature
 
     public function errorResponse($errors)
     {
+        $errorsFiltered = [];
+        foreach ($errors as $field => $message) {
+            $errorsFiltered[$field] = [
+                'message' => $message
+            ];
+        }
+
         return response([
             'message' => "The given data was invalid.",
-            'errors' => $errors
+            'errors' => $errorsFiltered
         ], 400);
     }
 
