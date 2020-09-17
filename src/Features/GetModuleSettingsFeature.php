@@ -24,28 +24,24 @@ class GetModuleSettingsFeature extends BaseModuleSettingsFeature
 
         $result = [];
         foreach ($keys as $key) {
-            $item = [
-                'name' => $key
-            ];
-
             /** @var ModuleSettingField $model */
             $model = $modelClass::field($key);
             if (!$model) {
                 continue;
             }
 
-            $item = array_merge($item, [
-                'label' => $model->getField()->getLabel(),
-                'type' => $model->getField()->getType()
-            ]);
+            $model->getField()->setName($key);
 
-            $item['value'] = $this->run(GetSettingValueJob::class, [
+            $value = $this->run(GetSettingValueJob::class, [
                 'module' => $this->module,
                 'param' => $key,
                 'type' => $model->getField()->getType()
             ]);
 
-            $result[] = $item;
+            $result[] = [
+                'field' => $model->getField()->getJson(),
+                'value' => $value
+            ];
         }
 
         return new JsonResource($result);
